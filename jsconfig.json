@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "es2017",
+    "allowSyntheticDefaultImports": false,
+    "paths": {}
+  },
+  "exclude": ["node_modules", "build", "docs"],
+}
