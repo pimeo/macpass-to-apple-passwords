@@ -8,17 +8,15 @@ module.exports.welcomeMessage = (options = {}) => {
   }, options)
 
   // build logo
-  // http://patorjk.com/software/taag/#p=display&f=Big&t=ProHacktive
+  // https://patorjk.com/software/taag/#p=display&h=0&f=DiamFont&t=Tools%20of%20Pimeo
   const logo = [
-    ``,
-    `______          _   _            _    _   _           `,
     `
-     ██████ ██    ██ ██████  ██ ███████  ██████  ██████  ██    ██ ███████ ██████  
-    ██       ██  ██  ██   ██ ██ ██      ██      ██    ██ ██    ██ ██      ██   ██ 
-    ██        ████   ██   ██ ██ ███████ ██      ██    ██ ██    ██ █████   ██████  
-    ██         ██    ██   ██ ██      ██ ██      ██    ██  ██  ██  ██      ██   ██ 
-     ██████    ██    ██████  ██ ███████  ██████  ██████    ████   ███████ ██   ██`,
-    ``,
+▗▄▄▄▖ ▄▄▄   ▄▄▄  █  ▄▄▄       ▄▄▄  ▗▞▀▀▘     ▗▄▄▖ ▄ ▄▄▄▄  ▗▞▀▚▖ ▄▄▄  
+  █  █   █ █   █ █ ▀▄▄       █   █ ▐▌        ▐▌ ▐▌▄ █ █ █ ▐▛▀▀▘█   █ 
+  █  ▀▄▄▄▀ ▀▄▄▄▀ █ ▄▄▄▀      ▀▄▄▄▀ ▐▛▀▘      ▐▛▀▘ █ █   █ ▝▚▄▄▖▀▄▄▄▀ 
+  █              █                 ▐▌        ▐▌   █                  
+                                                                     
+`
   ]
 
   // dynamic array of configurations

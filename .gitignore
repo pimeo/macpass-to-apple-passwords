@@ -264,3 +264,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/node,phpunit,php-cs-fixer,phpcodesniffer,macos,typescript,php,windows,git,composer,vite,vscode
+
+samples
+outputs
