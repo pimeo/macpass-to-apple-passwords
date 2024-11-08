@@ -42,9 +42,12 @@ class CSVExporter {
   async createFileFromValues(values) {
     // "Title","URL","Username","Password","Notes","OTPAuth"
     const data = values.reduce((acc, value) => {
-      acc += `"${value.title}", "${value.url}", "${value.userName}", "${value.password}", "${value.notes}", ""\n`;
+      if(false === value.isTrashed) {
+        acc += `"${value.title}","${value.url}","${value.userName}","${value.password.replaceAll('"', '\\"')}","${value.notes} - Import Macpass",""\n`;
+      }
+      // acc += `${value.title},${value.url},${value.userName},${value.password.replaceAll('"', '\"')},${value.notes} - Import Macpass,''\n`;
       return acc;
-    }, `Title, URL, Username, Password, Notes, OTPAuth\n`);
+    }, `Title,URL,Username,Password,Notes,OTPAuth\n`);
 
     return await fs.writeFile(path.join(process.cwd(), "outputs", this.outputFilename), data, { encoding: "utf-8" });
   }
