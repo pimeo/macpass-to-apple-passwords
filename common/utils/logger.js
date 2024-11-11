@@ -6,12 +6,13 @@
 const winston = require('winston')
 const format = require('logform').format
 const path = require('node:path')
+const process = require("node:process");
 
-const log_file_maxsize = 20480
-const log_file_maxfiles = undefined
+const logFileMaxsize = 20480
+const logFileMaxfiles = undefined
 
 // log directory
-const log_dir = path.resolve(process.cwd(), 'logs')
+const logDirectory = path.resolve(process.cwd(), 'logs')
 
 // console terminal format
 const console_format = format.combine(
@@ -46,17 +47,17 @@ module.exports.createLogger = () => {
       // - Write all logs error (and below) to `error.log`.
       //
       new winston.transports.File({
-        filename: path.join(log_dir, 'error.log'),
+        filename: path.join(logDirectory, 'error.log'),
         level: 'error',
-        maxFiles: log_file_maxfiles,
-        maxsize: log_file_maxsize,
+        maxFiles: logFileMaxfiles,
+        maxsize: logFileMaxsize,
         format: file_format
       }),
 
       new winston.transports.File({
-        filename: path.join(log_dir, 'combined.log'),
-        maxFiles: log_file_maxfiles,
-        maxsize: log_file_maxsize,
+        filename: path.join(logDirectory, 'combined.log'),
+        maxFiles: logFileMaxfiles,
+        maxsize: logFileMaxsize,
         format: file_format
       }),
 

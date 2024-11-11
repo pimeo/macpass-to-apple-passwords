@@ -1,3 +1,4 @@
+const process = require("node:process");
 const child_process = require("node:child_process");
 
 const { semverVersionRegexp } = require("./regexp");

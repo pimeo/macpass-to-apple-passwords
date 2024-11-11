@@ -1,3 +1,5 @@
+const process = require("node:process");
+
 // 
 // Dotenv parser
 // Inspired by https://github.com/niftylettuce/dotenv-parse-variables

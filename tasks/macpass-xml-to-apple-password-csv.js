@@ -42,23 +42,33 @@ class CSVExporter {
   async createFileFromValues(values) {
     // "Title","URL","Username","Password","Notes","OTPAuth"
     const data = values.reduce((acc, value) => {
-      if(false === value.isTrashed) {
-        acc += `"${value.title}","${value.url}","${value.userName}","${value.password.replaceAll('"', '\\"')}","${value.notes} - Import Macpass",""\n`;
+      if (false === value.isTrashed) {
+        acc += `"${value.title}","${value.url}","${
+          value.userName
+        }","${value.password.replaceAll('"', '\\"')}","${
+          value.notes
+        } - Import Macpass",""\n`;
       }
       // acc += `${value.title},${value.url},${value.userName},${value.password.replaceAll('"', '\"')},${value.notes} - Import Macpass,''\n`;
       return acc;
     }, `Title,URL,Username,Password,Notes,OTPAuth\n`);
 
-    return await fs.writeFile(path.join(process.cwd(), "outputs", this.outputFilename), data, { encoding: "utf-8" });
+    return await fs.writeFile(
+      path.join(process.cwd(), "outputs", this.outputFilename),
+      data,
+      { encoding: "utf-8" }
+    );
   }
 }
 
-module.exports = async (commandArguments, options, context) => {
+module.exports = async (commandArguments, options, app) => {
   console.log("[Task] macpass-xml-to-apple-password-csv");
   // console.log('commandArguments', commandArguments)
   // console.log('options', options)
 
-  const XmlImporter = new XMLImporter().setInputFilePath(path.resolve(process.cwd(), "./samples/macpass-backup-1.xml"));
+  const XmlImporter = new XMLImporter().setInputFilePath(
+    path.resolve(process.cwd(), "./samples/macpass-backup-1.xml")
+  );
   const contents = await XmlImporter.parseXml();
   // console.log('contents', contents.KeePassFile.Root[0].Group)
   // console.log('contents', contents.KeePassFile.Root[0].Group[0].Group[0].Entry)
@@ -71,7 +81,10 @@ module.exports = async (commandArguments, options, context) => {
   // ---
   const isTrashedGroup = (group) => {
     // check if group is considered as trashed group
-    return "False" === group.EnableAutoType[0] && "False" === group.EnableSearching[0];
+    return (
+      "False" === group.EnableAutoType[0] &&
+      "False" === group.EnableSearching[0]
+    );
   };
 
   const groups = [];
@@ -172,7 +185,8 @@ module.exports = async (commandArguments, options, context) => {
 
   // link groups to entries
   entries.map((entry) => {
-    const group = groups.filter((group) => group.uuid === entry.groupUuid)[0] || null;
+    const group =
+      groups.filter((group) => group.uuid === entry.groupUuid)[0] || null;
     if (group) {
       group.items += 1;
       group.itemsUuid.push(entry.uuid);
