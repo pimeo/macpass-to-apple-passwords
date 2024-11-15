@@ -28,7 +28,7 @@ const App = require("./common/utils/app.js");
 const app = new App();
 app.initializeContext().setProgram(program);
 
-// Listing of debian commands available
+// Enumerate available tasks
 
 // node command: node index macpass-xml-to-apple-password-csv
 // npm command: npm run cli macpass-xml-to-apple-password-csv
@@ -37,9 +37,9 @@ program
   .description(
     "Generate a Apple Password Application compatible csv file from a Macpass exported xml file."
   )
-  .requiredOption("-i, --input-xml-file <inputFile>", "Macpass input file")
+  .requiredOption("-i, --input-xml-filepath <inputXmlFilepath>", "Macpass XML input file")
   .requiredOption(
-    "-o, --output-csv-file <outputFile>",
+    "-o, --output-csv-file <outputCsvFile>",
     "Apple Passwords output file"
   )
   .action(async (commandOptions) => {

@@ -1,8 +1,8 @@
-# Export macpass kdbx or csv to apple password application
-
+# Macpass to Apple Password Manager
 - Created at: 8/11/2024
 - Created by: pimeo
 
+This cli tool lets you to convert a macpass xml file to Apple Password application csv file.
 
 ## Installation
 
@@ -10,19 +10,26 @@
 npm install
 ```
 
-## Use
+## Usage
 
+
+## Using npm
 ```sh
-npm run cli macpass-xml-to-apple-password-csv -- -i "~/Projects/export-macpass-to-apple-keychain/app/kdbx-to-csv/samples/macpass-backup-1.xml" -o "~/Projects/export-macpass-to-apple-keychain/app/kdbx-to-csv/outputs/apple-password-1.csv"
-
-node index macpass-xml-to-apple-password-csv -i "~/Projects/export-macpass-to-apple-keychain/app/kdbx-to-csv/samples/macpass-backup-1.xml" -o "~/Projects/export-macpass-to-apple-keychain/app/kdbx-to-csv/outputs/apple-password-1.csv"
+npm run cli macpass-xml-to-apple-password-csv -- -i "~/Projects/export-macpass-to-apple-keychain/app/kdbx-to-csv/samples/macpass-backup-1.xml" -o "apple-password-1.csv"
 ```
+
+## Using node
+```sh
+node index macpass-xml-to-apple-password-csv -i "~/Projects/export-macpass-to-apple-keychain/app/kdbx-to-csv/samples/macpass-backup-1.xml" -o "apple-password-1.csv"
+```
+
+Generated file will be created in the `outputs` directory at the root of the project.
 
 ## Limitation
 
-- Group creation is not supported.
+- Group creation is not supported to Apple Password yet.
 
-## Macpass XML semantic tree
+## Macpass XML semantic tree (11/15/2024 - version 0.8.1 (26030))
 
 ```txt
 - KeyPassFile

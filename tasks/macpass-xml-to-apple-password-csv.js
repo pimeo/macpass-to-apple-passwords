@@ -1,213 +1,55 @@
 const path = require("path");
-const xml2js = require("xml2js");
-const fs = require("fs").promises;
 const process = require("node:process");
-
-class XMLImporter {
-  constructor() {
-    this.inputFilepath = null;
-  }
-
-  setInputFilePath(filepath) {
-    this.filepath = filepath;
-    return this;
-  }
-
-  async readFile() {
-    return await fs.readFile(this.filepath, { encoding: "utf-8" });
-  }
-
-  async parseXml() {
-    const parser = xml2js.Parser({});
-    return await parser.parseStringPromise(await this.readFile());
-  }
-}
-
-class CSVExporter {
-  constructor() {
-    this.outputFilepath = null;
-    this.outputFilename = null;
-  }
-
-  setOutputFilename(outputFilename) {
-    this.outputFilename = outputFilename;
-
-    return this;
-  }
-
-  getOutputFilename() {
-    return this.outputFilename;
-  }
-
-  async createFileFromValues(values) {
-    // "Title","URL","Username","Password","Notes","OTPAuth"
-    const data = values.reduce((acc, value) => {
-      if (false === value.isTrashed) {
-        acc += `"${value.title}","${value.url}","${
-          value.userName
-        }","${value.password.replaceAll('"', '\\"')}","${
-          value.notes
-        } - Import Macpass",""\n`;
-      }
-      // acc += `${value.title},${value.url},${value.userName},${value.password.replaceAll('"', '\"')},${value.notes} - Import Macpass,''\n`;
-      return acc;
-    }, `Title,URL,Username,Password,Notes,OTPAuth\n`);
-
-    return await fs.writeFile(
-      path.join(process.cwd(), "outputs", this.outputFilename),
-      data,
-      { encoding: "utf-8" }
-    );
-  }
-}
+const XmlImporter = require("./../src/importers/xml-importer.js");
+const MacpassXmlManager = require("./../src/managers/macpass-xml-manager.js");
+const ApplePasswordCsvExporter = require("./../src/exporters/apple-password-csv-exporter.js");
 
 module.exports = async (commandArguments, options, app) => {
-  console.log("[Task] macpass-xml-to-apple-password-csv");
-  // console.log('commandArguments', commandArguments)
-  // console.log('options', options)
+  process.logger.info("[Task] macpass-xml-to-apple-password-csv");
 
-  const XmlImporter = new XMLImporter().setInputFilePath(
-    path.resolve(process.cwd(), "./samples/macpass-backup-1.xml")
+  const xmlImporter = new XmlImporter().setFilepath(
+    path.resolve(process.cwd(), options.inputXmlFilepath)
   );
-  const contents = await XmlImporter.parseXml();
-  // console.log('contents', contents.KeePassFile.Root[0].Group)
-  // console.log('contents', contents.KeePassFile.Root[0].Group[0].Group[0].Entry)
-  // console.log('contents', contents.KeePassFile.Root[0].Group[0].Group[0].Entry[0].String[0].Key)
 
-  // const mainGroup = contents.KeePassFile.Root[0].Group[0];
+  // parse xml contents
+  const contents = await xmlImporter.parseXml();
 
-  // ---
-  // parse groups
-  // ---
-  const isTrashedGroup = (group) => {
-    // check if group is considered as trashed group
-    return (
-      "False" === group.EnableAutoType[0] &&
-      "False" === group.EnableSearching[0]
+  // create a macpass xml manager to handle xml raw contents
+  const macpassXmlManager = new MacpassXmlManager();
+
+  // extract groups
+  const groups = macpassXmlManager.extractGroupsFromXmlTree(contents);
+
+  // extract entries
+  const entries = macpassXmlManager.extractEntriesFromXmlTree(contents);
+
+  // export macpass entries to a apple password app compatible format csv file
+  const applePasswordCsvExporter = new ApplePasswordCsvExporter();
+  try {
+    const outputFilepath = await applePasswordCsvExporter.createFileFromValues(
+      entries,
+      options.outputCsvFile ?? "generated-file.csv"
     );
-  };
-
-  const groups = [];
-  for (const originalGroup of contents.KeePassFile.Root[0].Group) {
-    const groupSchema = {
-      uuid: null,
-      name: null,
-      parentUuid: null,
-      items: 0,
-      itemsUuid: [],
-      isTrashed: false
-    };
-
-    const group = {
-      ...structuredClone(groupSchema),
-      uuid: originalGroup.UUID[0],
-      name: originalGroup.Name[0],
-      isTrashed: isTrashedGroup(originalGroup)
-    };
-
-    if (originalGroup.Group) {
-      for (const originalSubGroup of originalGroup.Group) {
-        const subGroup = {
-          ...structuredClone(groupSchema),
-          uuid: originalSubGroup.UUID[0],
-          name: originalSubGroup.Name[0],
-          parentUuid: group.uuid,
-          isTrashed: isTrashedGroup(originalSubGroup)
-        };
-
-        groups.push(subGroup);
-      }
-    }
-
-    groups.push(group);
+    process.logger.info(`File created at ${outputFilepath}`);
+  } catch (err) {
+    process.logger.warning("Unable to create csv file", err);
   }
 
-  // console.log("groups", JSON.stringify(groups, null, 2));
-  // console.log("groups", groups);
-
-  // ---
-  // parse entries
-  // ---
-
-  function parseEntryAttribute(entryAttribute, entries = []) {
-    // deals with Group attributes inside the Group attribute
-    if (entryAttribute.Group) {
-      for (const subGroup of entryAttribute.Group) {
-        parseEntryAttribute(subGroup, entries);
-      }
-    }
-
-    // ensure there are entries in Group attribute
-    if (Array.isArray(entryAttribute.Entry)) {
-      for (const originalEntry of entryAttribute.Entry) {
-        // console.log("entryAttribute", originalEntry);
-
-        // ensure it's a entry and not a group of group
-        const stringsMetadatas = {};
-        for (str of originalEntry.String) {
-          const key = str.Key[0];
-          if ("Password" === key) {
-            stringsMetadatas[key] = str.Value[0]._;
-          } else {
-            stringsMetadatas[key] = str.Value[0];
-          }
-        }
-
-        const entry = {
-          uuid: originalEntry.UUID[0],
-          title: stringsMetadatas.Title,
-          userName: stringsMetadatas.UserName,
-          password: stringsMetadatas.Password,
-          url: stringsMetadatas.URL,
-          notes: stringsMetadatas.Notes,
-          createdAt: originalEntry.Times[0].CreationTime[0],
-          lastAccessedAt: originalEntry.Times[0].LastAccessTime[0],
-          groupUuid: entryAttribute.UUID[0],
-          isTrashed: false
-        };
-
-        entries.push(entry);
-      }
-    }
-
-    return entries;
-  }
-
-  let entries = [];
-  for (const originalGroup of contents.KeePassFile.Root[0].Group) {
-    parseEntryAttribute(originalGroup, entries);
-  }
-
-  // console.log("entries", entries);
-  // console.log("total entries", entries.length);
-  // console.log(entries.filter((entry) => entry.title === "test"));
-  // console.log(entries.map((entry) => entry.title === "test"));
+  // -- generate some stats
 
   // link groups to entries
-  entries.map((entry) => {
-    const group =
-      groups.filter((group) => group.uuid === entry.groupUuid)[0] || null;
-    if (group) {
-      group.items += 1;
-      group.itemsUuid.push(entry.uuid);
-    }
+  const { groups: linkedGroups, entries: linkedEntries } =
+    macpassXmlManager.linkGroupsToEntries(groups, entries);
 
-    // detect trash group
-    // if ("Corbeille" === group.name) {
-    if (true === group.isTrashed) {
-      // group.isTrashed = true;
-      entry.isTrashed = true;
-    }
-
-    return entry;
-  });
+  process.logger.info(`Count of groups: ${linkedGroups.length}`);
+  process.logger.info(`Count of entries: ${linkedEntries.length}`);
 
   // trashed entries and groups
-  // console.log(entries.filter((entry) => entry.isTrashed));
-  // console.log(groups.filter((group) => group.isTrashed));
+  const trashedEntries = entries.filter((entry) => entry.isTrashed);
+  const trashedGroups = groups.filter((group) => group.isTrashed);
 
-  // console.log(groups);
+  process.logger.info(`Count of trashed groups: ${trashedGroups.length}`);
+  process.logger.info(`Count of trashed entries: ${trashedEntries.length}`);
 
-  const csvExporter = new CSVExporter();
-  csvExporter.setOutputFilename("file.csv").createFileFromValues(entries);
+  process.logger.info(`[Task] terminated task`)
 };

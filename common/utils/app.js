@@ -1,6 +1,3 @@
-//
-// dotenv loading environnment configurations
-//
 const process = require("node:process");
 const { castEnvVars } = require("./dotfile.js");
 
@@ -10,6 +7,10 @@ class App {
     this.program = null;
   }
 
+  /**
+   * Initialize environment variables
+   * @returns {Object} env variables
+   */
   initializeEnvironmentVars() {
     const env = require("dotenv").config({
       path: `.env.${process.env.NODE_ENV}`
@@ -21,6 +22,10 @@ class App {
     return env;
   }
 
+  /**
+   * Initialize the application context
+   * @returns {this}
+   */
   initializeContext() {
     const envVars = this.initializeEnvironmentVars();
 
@@ -33,16 +38,24 @@ class App {
     return this;
   }
 
+  /**
+   * Return the application context
+   * @returns {Object}
+   */
   getContext() {
     return this.context;
   }
 
+  /**
+   * Return commander cli program
+   * @returns {Program}
+   */
   getProgram() {
     return this.program;
   }
 
   /**
-   * Set program
+   * Set commander cli program
    * @param {Program} program
    * @returns
    */
