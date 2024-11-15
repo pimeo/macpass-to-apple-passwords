@@ -1,3 +1,5 @@
+const process = require("node:process");
+
 // 
 // Dotenv parser
 // Inspired by https://github.com/niftylettuce/dotenv-parse-variables
@@ -48,6 +50,12 @@ const parseKey = (value, key) => {
   return value;
 }
 
+/**
+ * Cast environment variables
+ * @param {Object} env 
+ * @param {Object} options 
+ * @returns {Object}
+ */
 module.exports.castEnvVars = (env, options) => {
   const envOptions = Object.assign({}, DEFAULT_OPTIONS, options || {});
 

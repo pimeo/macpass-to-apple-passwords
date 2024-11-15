@@ -1,33 +1,46 @@
+/**
+ * Display a welcome message
+ * @param {Object} options welcome message options link environment name or cli version or cli global flags
+ */
 module.exports.welcomeMessage = (options = {}) => {
-
-  options = Object.assign({}, {
-    cli_version: 'undefined',
-    env: 'unknown',
-    debug: false,
-    silent: false,
-  }, options)
+  options = Object.assign(
+    {},
+    {
+      cli_version: "undefined",
+      env: "unknown",
+      debug: false,
+      silent: false
+    },
+    options
+  );
 
   // build logo
-  // http://patorjk.com/software/taag/#p=display&f=Big&t=ProHacktive
+  // https://patorjk.com/software/taag/#p=display&h=0&f=DiamFont&t=Tools%20of%20Pimeo
   const logo = [
-    ``,
-    `______          _   _            _    _   _           `,
     `
-     ██████ ██    ██ ██████  ██ ███████  ██████  ██████  ██    ██ ███████ ██████  
-    ██       ██  ██  ██   ██ ██ ██      ██      ██    ██ ██    ██ ██      ██   ██ 
-    ██        ████   ██   ██ ██ ███████ ██      ██    ██ ██    ██ █████   ██████  
-    ██         ██    ██   ██ ██      ██ ██      ██    ██  ██  ██  ██      ██   ██ 
-     ██████    ██    ██████  ██ ███████  ██████  ██████    ████   ███████ ██   ██`,
-    ``,
-  ]
+▗▄▄▄▖ ▄▄▄   ▄▄▄  █  ▄▄▄       ▄▄▄  ▗▞▀▀▘     ▗▄▄▖ ▄ ▄▄▄▄  ▗▞▀▚▖ ▄▄▄  
+  █  █   █ █   █ █ ▀▄▄       █   █ ▐▌        ▐▌ ▐▌▄ █ █ █ ▐▛▀▀▘█   █ 
+  █  ▀▄▄▄▀ ▀▄▄▄▀ █ ▄▄▄▀      ▀▄▄▄▀ ▐▛▀▘      ▐▛▀▘ █ █   █ ▝▚▄▄▖▀▄▄▄▀ 
+  █              █                 ▐▌        ▐▌   █                  
+                                                                     
+`
+  ];
 
   // dynamic array of configurations
-  const metadata = []
+  const metadata = [];
   // cli version
-  if (options.cli_version) { metadata.push(`CLI Version: ${options.cli_version}`) }
-  if (options.env) { metadata.push(`Environment: ${options.env}`) }
-  if (options.debug) { metadata.push(`Debug Mode: Enabled`) }
-  if (options.silent) { metadata.push(`Silent Mode: Enabled`) }
+  if (options.cli_version) {
+    metadata.push(`CLI Version: ${options.cli_version}`);
+  }
+  if (options.env) {
+    metadata.push(`Environment: ${options.env}`);
+  }
+  if (options.debug) {
+    metadata.push(`Debug Mode: Enabled`);
+  }
+  if (options.silent) {
+    metadata.push(`Silent Mode: Enabled`);
+  }
 
   // extra static data
   const extra = [
@@ -37,10 +50,10 @@ module.exports.welcomeMessage = (options = {}) => {
     `Need help using npm (production)? Run command npm run cli -- --help`,
     `------------------------------------------------------`,
     ``
-  ]
+  ];
 
   // console log everything
-  console.log(logo.join('\n'))
-  console.log(metadata.join('\n'))
-  console.log(extra.join('\n'))
-}
+  console.log(logo.join("\n"));
+  console.log(metadata.join("\n"));
+  console.log(extra.join("\n"));
+};
