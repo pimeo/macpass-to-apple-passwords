@@ -1,29 +1,38 @@
-# Macpass to Apple Password Manager
+# Macpass to Apple Passwords
 - Created at: 8/11/2024
 - Created by: pimeo
 
-This cli tool lets you to convert a macpass xml file to Apple Password application csv file.
+Simple tool to generate a CSV file to facilitate the migration between Macpass and Apple Passwords
 
 ## Installation
 
 ```sh
+git clone https://github.com/pimeo/macpass-to-apple-passwords.git
+cd macpass-to-apple-passwords
 npm install
 ```
 
 ## Usage
 
+From Macpass, export your passwords to a xml file. Then use the tool to convert your xml file to a compatible Apple Passwords CSV file format.
+
 
 ## Using npm
 ```sh
-npm run cli macpass-xml-to-apple-password-csv -- -i "~/Projects/export-macpass-to-apple-keychain/app/kdbx-to-csv/samples/macpass-backup-1.xml" -o "apple-password-1.csv"
+npm run cli macpass-xml-to-apple-password-csv -- -i "<PATH_TO_YOUR_MACPASS_XML_FILE>" -o "apple-password-imports.csv"
 ```
+Example: `PATH_TO_YOUR_MACPASS_XML_FILE` => `/Users/me/my-macpass-backup.xml`
+
 
 ## Using node
 ```sh
-node index macpass-xml-to-apple-password-csv -i "~/Projects/export-macpass-to-apple-keychain/app/kdbx-to-csv/samples/macpass-backup-1.xml" -o "apple-password-1.csv"
+node index macpass-xml-to-apple-password-csv -i "<PATH_TO_YOUR_MACPASS_XML_FILE>" -o "apple-passwords-imports.csv"
 ```
 
-Generated file will be created in the `outputs` directory at the root of the project.
+Example: `PATH_TO_YOUR_MACPASS_XML_FILE` => `/Users/me/my-macpass-backup.xml`
+
+
+Generated file will be created in the `outputs` directory at the root of the project. You may have to created it if program throws an error.
 
 ## Limitation
 
